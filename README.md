@@ -15,7 +15,7 @@ If it is less than or equal to 0:
 |--|---|---|---|---|---|
 |1|SELL|IVV|100|LMT|Closing price of previous day|
 ## Model
-####Input
+#### Input
 1. Yield of IVV today
 2. Open price of IVV today
 3. Close price of IVV today
@@ -26,12 +26,12 @@ If it is less than or equal to 0:
 8. Yield of 30 years US Treasury today
 9. The change in oil price today
 
-####Output
+#### Output
 Whether the yield of IVV tomorrow would be bigger than 0.
 
 1 for yes, 0 for no.
 
-####Model selection
+#### Model selection
 1. LogLinear Regression
 2. K-NN
 3. Decision Tree
