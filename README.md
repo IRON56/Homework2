@@ -44,5 +44,14 @@ On the previous 30 days.
 Scatter plot of total asset yield in this time period.
 
 ## Dash
-#### Section 1: Model prepration
-1. Al
+#### Step 1: Model prepration
+1. Allow users to choose the window size of the model
+2. Allow users to choose what model they wish to use.
+#### Step 2: Back-Test
+1. Generate blotter on previous 30 days.
+2. Draw graph shows how the total yield of a user changed during that time period.
+#### Step 3: Trade Suggestion
+1. Using model to give user a trade suggestion on next day.
+2. Once the user click Confirm button, the order will be sent to TWS.
+## Dash Graph
+
