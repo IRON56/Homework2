@@ -3,13 +3,13 @@ This homework applies a simple trading strategy using data from yahoo finance. A
 ## Strategy
 Determines whether the IVV's yield of tomorrow would be greater than 0 at the end of each day.
 
-If it is greater than 0:
+**If it is greater than 0:**
 
 |ID|Action Type|Trading Symbol| Amount|Order Type|Price|
 |--|---|---|---|---|---|
 |1|BUY|IVV|100|MKT|N/A|
 
-If it is less than or equal to 0:
+**If it is less than or equal to 0:**
 
 |ID|Action Type|Trading Symbol| Amount|Order Type|Price|
 |--|---|---|---|---|---|
@@ -36,4 +36,13 @@ Whether the yield of IVV tomorrow would be bigger than 0.
 2. K-NN
 3. Decision Tree
 
+## Back-Test
+The back-test is down on the past 30 days.
+#### Blotters
+On the previous 30 days.
+#### Statistics
+Scatter plot of total asset yield in this time period.
+
 ## Dash
+#### Section 1: Model prepration
+1. Al
