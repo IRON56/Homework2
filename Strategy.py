@@ -93,44 +93,63 @@ def backtest (model_data,test):
     Result = loaded_model.predict(test_data.loc[:, test_data.columns != 'Response'])
     amt = 0
     ror = []
-    df = pd.DataFrame()
-    df['Date'] = test_data.index[1:]
-    df['ID'] = test_data['Close'][1:]
-    df['Type'] = test_data['Close'][1:]
-    df['actn'] = test_data['Close'][1:]
-    df['Price'] = test_data['Close'][1:]
-    df['size'] = test_data['Close'][1:]
-    df['symb'] = test_data['Close'][1:]
+    blotter = pd.DataFrame()
+    ledger = pd.DataFrame()
+    blotter['Date'] = test_data.index[:]
+    blotter['ID'] = test_data['Close'][:]
+    blotter['Type'] = test_data['Close'][:]
+    blotter['actn'] = test_data['Close'][:]
+    blotter['Price'] = test_data['Close'][:]
+    blotter['size'] = test_data['Close'][:]
+    blotter['symb'] = test_data['Close'][:]
+    ledger['Date'] = test_data.index[:]
+    ledger['position'] = test_data['Close'][:]
+    ledger['Cash'] = test_data['Close'][:]
+    ledger['Stock Value'] = test_data['Close'][:]
+    ledger['Total Value'] = test_data['Close'][:]
+    ledger['Revenue'] = test_data['Close'][:]
+    ledger['IVV Yield'] = test_data['IVV'][:]
+    ledger['position'][0] = 0
+    ledger['Cash'][0] = 1000000
+    ledger['Total Value'][0] = 1000000
+    ledger['Stock Value'][0] = 1000000
+    ledger['Revenue'][0] = 0
+    ledger['IVV Yield'][0] = test_data['IVV'][0]
     count = 1
-    last = 0.0
-    cost = 0
+    last = 1000000
+    gmrr = 1
     revenue = 0.0
     for i in range(1, 31):
-        df['ID'][i-1] = count
+        blotter['ID'][i-1] = count
+        ledger['IVV Yield'][i] = test_data['IVV'][i]
         if Result[i - 1] > 0.5:
-            df['Type'][i-1] = 'MKT'
-            df['actn'][i-1] = 'BUY'
-            df['symb'][i-1] = 'IVV'
-            df['size'][i-1] = 100
-            df['Price'][i-1] = test_data['Open'][i].round(2)
-            amt = amt + 1
-            cost = cost + 100*test_data['Open'][i]
-            revenue = revenue + amt * 100 * test_data['Close'][i] / cost - 1
-            ror.append(revenue.round(4))
-            last = revenue
-            revenue = 0.0
+            blotter['Type'][i-1] = 'MKT'
+            blotter['actn'][i-1] = 'BUY'
+            blotter['symb'][i-1] = 'IVV'
+            blotter['size'][i-1] = 200
+            blotter['Price'][i-1] = test_data['Open'][i].round(2)
+            ledger['position'][i] = ledger['position'][i-1] + 200
+            ledger['Stock Value'][i] = test_data['Close'][i]*ledger['position'][i]
+            ledger['Cash'][i] = ledger['Cash'][i-1] - test_data['Open'][i]*200
+            ledger['Total Value'][i] = ledger['Stock Value'][i]+ledger['Cash'][i]
+            ledger['Revenue'][i] = ledger['Total Value'][i]/ledger['Total Value'][i-1]-1
+            gmrr = gmrr *(1+ledger['Revenue'][i])
         else:
-            df['Type'][i-1] = 'LMT'
-            df['actn'][i-1] = 'SELL'
-            df['symb'][i-1] = 'IVV'
-            df['size'][i-1] = amt*100
-            df['Price'][i-1] = test_data['Close'][i-1].round(2)
-            ror.append(round(last,4))
-            amt = 0
-            revenue = last
-            cost = 0.0
+            blotter['Type'][i-1] = 'LMT'
+            blotter['actn'][i-1] = 'SELL'
+            blotter['symb'][i-1] = 'IVV'
+            blotter['size'][i-1] = ledger['position'][i-1]
+            blotter['Price'][i-1] = test_data['Close'][i-1].round(2)
+            ledger['position'][i] = 0
+            ledger['Stock Value'][i] = 0
+            ledger['Cash'][i] = ledger['Cash'][i-1] + test_data['Close'][i-1]*ledger['position'][i-1]
+            ledger['Total Value'][i] = ledger['Stock Value'][i]+ledger['Cash'][i]
+            ledger['Revenue'][i] = ledger['Total Value'][i]/ledger['Total Value'][i-1]-1
+            gmrr = gmrr *(1+revenue)
         count = count +1
-    test['Response'] =  loaded_model.predict(test.loc[:, test.columns != 'Response'])
+#     test['Response'] =  loaded_model.predict(test.loc[:, test.columns != 'Response'])
     test_data[:]['actn'] = 'BUY'
-    df["Rate of Return(%)"] = ror
-    return df, test
+    vol = np.std(ledger['Revenue'])
+    gmrr = pow(gmrr,1/30)-1
+    sharp = (gmrr-0.0007)/vol
+    return blotter[:-1], ledger, test, sharp
