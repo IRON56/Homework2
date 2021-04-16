@@ -54,4 +54,4 @@ Scatter plot of total asset yield in this time period.
 1. Using model to give user a trade suggestion on next day.
 2. Once the user click Confirm button, the order will be sent to TWS.
 ## Dash Graph
-![contents](https://github.com/IRON56/Homework2/blob/main/Dash1.pdf)
+![contents](https://github.com/IRON56/Homework2/blob/main/Dash.pdf)
